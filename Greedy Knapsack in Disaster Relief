@@ -1,0 +1,67 @@
+import java.util.*;
+
+class Item {
+    String name;
+    double weight, value, ratio;
+
+    Item(String name, double weight, double value) {
+        this.name = name;
+        this.weight = weight;
+        this.value = value;
+        this.ratio = value / weight; // value-to-weight ratio
+    }
+}
+
+public class GreedyKnapsackDisasterRelief {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Predefined example from your case study
+        Item[] items = {
+            new Item("Antibiotics Kit", 5, 10),
+            new Item("Painkillers Pack", 3, 6),
+            new Item("Bandages Bundle", 4, 7),
+            new Item("IV Fluids", 6, 8),
+            new Item("Water Purifier Tabs", 2, 4)
+        };
+
+        double capacity = 15.0; // Helicopter payload capacity (kg)
+        double totalValue = 0.0;
+        double remainingCapacity = capacity;
+
+        // Sort items by descending value-to-weight ratio
+        Arrays.sort(items, (a, b) -> Double.compare(b.ratio, a.ratio));
+
+        System.out.println("Selected Items for Disaster Relief:\n");
+        System.out.printf("%-25s %-10s %-10s %-10s %-10s%n",
+                "Item", "Weight", "Value", "Taken(kg)", "Value Gained");
+        System.out.println("\n");
+
+        for (Item item : items) {
+            if (remainingCapacity == 0)
+                break;
+
+            if (item.weight <= remainingCapacity) {
+                // Take full item
+                remainingCapacity -= item.weight;
+                totalValue += item.value;
+                System.out.printf("%-25s %-10.2f %-10.2f %-10.2f %-10.2f%n",
+                        item.name, item.weight, item.value, item.weight, item.value);
+            } else {
+                // Take fractional part of the item
+                double fraction = remainingCapacity / item.weight;
+                double valueGained = item.value * fraction;
+                totalValue += valueGained;
+                System.out.printf("%-25s %-10.2f %-10.2f %-10.2f %-10.2f%n",
+                        item.name, item.weight, item.value, remainingCapacity, valueGained);
+                remainingCapacity = 0;
+            }
+        }
+
+        System.out.println("\n");
+        System.out.printf("Total Urgency Value Achieved: %.2f utility points%n", totalValue);
+        System.out.printf("Total Payload Used: %.2f / %.2f kg%n", (capacity - remainingCapacity), capacity);
+
+        sc.close();
+    }
+}
